@@ -6,6 +6,10 @@ var merry = require("merry");
 var compiler = bankai(path.join(__dirname, "index.js"));
 var app = merry();
 
+app.route("GET", "/health-check", function (req, res, ctx) {
+  res.writeHead(200).end();
+});
+
 app.route("GET", "/api", function (req, res, ctx) {
   res.writeHead(200, { "Content-Type": "application/json" });
   res.write(JSON.stringify({ hello: "world" }));
