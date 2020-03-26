@@ -1,5 +1,22 @@
 var html = require("choo/html");
+var css = require("sheetify");
 var LoadingIcon = require("../components/loading-icon.js");
+
+css`
+  html {
+    height: 100%;
+  }
+  body {
+    height: 100%;
+  }
+`;
+
+var sectioncss = css`
+  :host {
+    flex-grow: 1;
+    flex-shrink: 1;
+  }
+`;
 
 var TITLE = "VT2 Leaderboards";
 
@@ -25,7 +42,7 @@ function link(to, label, active) {
 
 function loading() {
   return html`
-    <div class="mv7">
+    <div class="mv7 center">
       <div class="flex flex-row justify-center v-mid fw7 i">
         <div class="animate rotate dib flex flex-column justify-center mr1">
           ${LoadingIcon()}
@@ -68,8 +85,8 @@ module.exports = function view(state, emit) {
   );
 
   return html`
-    <body class="avenir helvetica lh-copy">
-      <main class="pa3 cf center">
+    <body class="avenir helvetica lh-copy h-100">
+      <main class="pa3 cf center flex flex-column h-100">
         <header class="bg-white black-80 tc">
           <h1 class="mt2 mb0 f6 fw4 ttu tracked">VT2 Leaderboards</h1>
           <h2 class="mt0 mb0 i fw1 f1">${leaderboard.label}</h2>
@@ -77,7 +94,7 @@ module.exports = function view(state, emit) {
             ${nav}
           </nav>
         </header>
-        <section>
+        <section class="flex overflow-scroll ${sectioncss}">
           ${leaderboard_state.loading
             ? loading()
             : list(leaderboard_state.data)}
