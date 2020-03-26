@@ -36,30 +36,28 @@ function loading() {
   `;
 }
 
-function list() {
+function list(data) {
   return html`
     <ul class="list pl0 measure center">
-      <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">
-        Orange
-      </li>
-      <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">Apple</li>
-      <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">Peach</li>
-      <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">Grape</li>
-      <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">
-        Grapefruit
-      </li>
-      <li class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30">Kiwi</li>
+      ${data.map(
+        (item) => html`<li
+          class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30"
+        >
+          ${item.position + 1} - ${item.username} - ${item.score}
+        </li>`
+      )}
     </ul>
   `;
 }
 
 module.exports = function view(state, emit) {
-  if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE);
-
   var route = state.route.startsWith("/") ? state.route : `/${state.route}`;
   var leaderboard = getLeaderboardByRoute(route);
-
   var leaderboard_state = state[leaderboard.key];
+  var pageTitle = `${TITLE} - ${leaderboard.label}`;
+
+  if (state.title !== pageTitle) emit(state.events.DOMTITLECHANGE, pageTitle);
+
   if (!leaderboard_state) {
     emit("get_list", leaderboard.key);
     leaderboard_state = { loading: true };
@@ -80,7 +78,9 @@ module.exports = function view(state, emit) {
           </nav>
         </header>
         <section>
-          ${leaderboard_state.loading ? loading() : list()}
+          ${leaderboard_state.loading
+            ? loading()
+            : list(leaderboard_state.data)}
         </section>
       </main>
     </body>
