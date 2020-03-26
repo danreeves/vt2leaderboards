@@ -4,6 +4,12 @@ var path = require("path");
 var merry = require("merry");
 
 var compiler = bankai(path.join(__dirname, "index.js"));
+
+compiler.on("error", function (nodeName, edgeName, error) {
+  console.log("[BANKAI ERROR]", nodeName, edgeName);
+  console.error(error);
+});
+
 var app = merry();
 
 app.route("GET", "/health-check", function (req, res, ctx) {
