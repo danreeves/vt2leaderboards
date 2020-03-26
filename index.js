@@ -1,4 +1,4 @@
-require("babel-polyfill");
+require("regenerator-runtime/runtime");
 var css = require("sheetify");
 var choo = require("choo");
 
