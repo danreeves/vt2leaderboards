@@ -19,7 +19,7 @@ app.route("default", function (req, res, ctx) {
   });
 });
 
-app.listen(process.env.PORT || 8080);
+app.listen(parseInt(process.env.PORT) || 8080);
 
 /*
 fetch("https://5107.playfabapi.com/Client/GetLeaderboard", {
