@@ -11,8 +11,10 @@
     "test-deps": "dependency-check . && dependency-check . --extra --no-dev -i tachyons"
   },
   "dependencies": {
+    "babel-polyfill": "^6.26.0",
     "choo": "^7.1.0",
     "choo-service-worker": "^3.0.0",
+    "node-fetch": "^2.6.0",
     "sheetify": "^8.0.0",
     "tachyons": "^4.11.1"
   },
