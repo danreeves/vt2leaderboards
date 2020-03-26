@@ -10,7 +10,7 @@ var compiler = bankai(path.join(__dirname, "index.js"), {
   watch: !PROD,
 });
 
-compiler.on("error", function (nodeName, edgeName, error) {
+compiler.compiler.on("error", function (nodeName, edgeName, error) {
   console.log("[BANKAI ERROR]", nodeName, edgeName);
   console.error(error);
 });
