@@ -1,0 +1,14 @@
+{
+  "name": "vt2leaderboards",
+  "short_name": "vt2leaderboards",
+  "description": "Vermintide 2 Leaderboards",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#000",
+  "theme_color": "#000",
+  "icons": [{
+    "src": "/assets/icon.png",
+    "type": "image/png",
+    "sizes": "512x512"
+  }]
+}
