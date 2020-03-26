@@ -94,7 +94,7 @@ module.exports = function view(state, emit) {
             ${nav}
           </nav>
         </header>
-        <section class="flex overflow-scroll ${sectioncss}">
+        <section class="flex overflow-scroll overflow-x-hidden ${sectioncss}">
           ${leaderboard_state.loading
             ? loading()
             : list(leaderboard_state.data)}
