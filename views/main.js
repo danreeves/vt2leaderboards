@@ -111,8 +111,8 @@ var CAREER_NAME_LOOKUP = {
   wh_zealot: "Zealot",
 };
 
-function teamMember(data) {
-  return html`<div class="flex flex-row items-center mb1">
+function teamMember(data, last) {
+  return html`<div class="flex flex-row items-center ${!last && "mb1"}">
     <img
       src="/assets/careers/${data.careerName}.png"
       alt=${CAREER_NAME_LOOKUP[data.careerName]}
@@ -127,6 +127,9 @@ var teambox = css`
   :host {
     width: 500px;
     max-width: 100%;
+    margin-bottom: 1.5em;
+    margin: 0.5em;
+    padding: 0.5em;
   }
 `;
 
@@ -135,7 +138,6 @@ var scoreRow = css`
     display: flex;
     flex-direction: row;
     justify-content: space-around;
-    margin-bottom: 1.5em;
   }
   :host > div {
     display: flex;
@@ -155,14 +157,24 @@ var teamCol = css`
   }
 `;
 
-function team(team, i) {
-  const firstMember = team[0];
+var evenTeam = css`
+  :host {
+    background: #f9f9f9;
+  }
+`;
+
+function team(teamMembers, i) {
+  const firstMember = teamMembers[0];
   const { tier, score } = firstMember;
-  return html`<li class="flex flex-column ${teambox}">
+  return html`<li
+    class="flex flex-column ${teambox} ${i % 2 === 0 && evenTeam}"
+  >
     <div class=${scoreRow}>
       <div class="rank">${i + 1}</div>
       <div class="name ${teamCol}">
-        ${team.map((item) => teamMember(item))}
+        ${teamMembers.map((item, i) =>
+          teamMember(item, i === teamMembers.length - 1)
+        )}
       </div>
       <div>${tier}</div>
       <div>${score}</div>

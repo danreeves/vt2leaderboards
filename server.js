@@ -51,12 +51,30 @@ function convertWeaveScore(weave_score) {
   return { tier, score, careerName };
 }
 
-function chunkArray(array, chunkSize) {
-  var R = [];
-  for (var i = 0; i < array.length; i += chunkSize) {
-    R.push(array.slice(i, i + chunkSize));
+function chunkTeams(players, teamSize) {
+  var teams = [];
+  var currentTeam = [];
+  var lastPlayer = null;
+  for (var player of players) {
+    if (!lastPlayer) {
+      currentTeam.push(player);
+    } else {
+      if (player.score === lastPlayer.score) {
+        currentTeam.push(player);
+      } else {
+        if (currentTeam.length !== 0) {
+          teams.push(currentTeam);
+        }
+        currentTeam = [player];
+      }
+    }
+    if (currentTeam.length === teamSize) {
+      teams.push(currentTeam);
+      currentTeam = [];
+    }
+    lastPlayer = player;
   }
-  return R;
+  return teams;
 }
 
 async function fetchLeaderboard(type) {
@@ -83,7 +101,7 @@ async function fetchLeaderboard(type) {
   });
   if (response.ok) {
     var leaderboardData = await response.json();
-    var data = leaderboardData.data.Leaderboard.map((position) => {
+    var players = leaderboardData.data.Leaderboard.map((position) => {
       const { tier, score, careerName } = convertWeaveScore(position.StatValue);
       return {
         position: position.Position,
@@ -93,7 +111,7 @@ async function fetchLeaderboard(type) {
         username: position.Profile.LinkedAccounts[0].Username, // @TODO: make this cross platform and reliable, see game code,
       };
     });
-    var teams = chunkArray(data, numPlayers);
+    var teams = chunkTeams(players, numPlayers);
     return { data: teams, lastUpdated: new Date().toISOString() };
   }
   return {
