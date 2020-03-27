@@ -98,6 +98,7 @@ function teamMember(data) {
 var teambox = css`
   :host {
     width: 500px;
+    max-width: 100%;
   }
 `;
 
@@ -145,7 +146,7 @@ function list(teams) {
   var firstTeam = teams[0];
   var numPlayers = firstTeam.length;
   return html`
-    <ul class="list pl0 measure center flex flex-column">
+    <ul class="list pl0 center flex flex-column mw-100">
       <div class="fw6 ${scoreRow} ${teambox}">
         <div class="rank">Rank</div>
         <div class="name">${numPlayers === 1 ? "Player" : "Team"}</div>
@@ -161,13 +162,26 @@ function footer(data) {
   if (data.lastUpdated) {
     return html`<footer class="f7 glow o-30 pv3 center">
       Last updated: ${data.lastUpdated}. Updates every hour.
-      <a href="https://raindi.sh/" class="link black bold fw9"
+      <a href="https://raindi.sh/" class="link black bold fw9 nowrap"
         ><span class="red">♡</span> raindish.</a
       >
     </footer>`;
   }
   return null;
 }
+
+var headerstyle = css`
+  :host {
+    background-image: url(/assets/weave.png);
+    background-repeat: no-repeat;
+    background-position: center right;
+    background-size: contain;
+    margin-left: auto;
+    margin-right: auto;
+    width: 600px;
+    max-width: 100%;
+  }
+`;
 
 module.exports = function view(state, emit) {
   var route = state.route.startsWith("/") ? state.route : `/${state.route}`;
@@ -188,8 +202,8 @@ module.exports = function view(state, emit) {
 
   return html`
     <body class="avenir helvetica lh-copy h-100">
-      <main class="pa3 pb0 cf center flex flex-column h-100">
-        <header class="bg-white black-80 tc">
+      <main class="ph3 cf center flex flex-column h-100">
+        <header class="pt3 bg-white black-80 tc ${headerstyle}">
           <h1 class="mv2 f6 fw9 ttu dark-red ${trackedOmega}">
             VT2 Leaderboards
           </h1>
