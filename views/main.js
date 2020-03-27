@@ -18,6 +18,44 @@ var sectioncss = css`
   }
 `;
 
+var visuallyHidden = css`
+  :host {
+    position: absolute;
+    left: -10000px;
+    top: auto;
+    width: 1px;
+    height: 1px;
+    overflow: hidden;
+  }
+`;
+
+var trackedOmega = css`
+  :host {
+    letter-spacing: 0.5em;
+  }
+`;
+
+var active = css`
+  :host {
+    position: relative;
+    font-style: italic;
+  }
+
+  :host:after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    margin: 0 auto;
+    width: 0;
+    height: 0;
+    border-top: solid 6px #000;
+    border-left: solid 6px transparent;
+    border-right: solid 6px transparent;
+  }
+`;
+
 var TITLE = "VT2 Leaderboards";
 
 var leaderboards = [
@@ -31,9 +69,9 @@ function getLeaderboardByRoute(route) {
   return leaderboards.find((lb) => lb.route === route);
 }
 
-function link(to, label, active) {
+function link(to, label, isActive) {
   return html`<a
-    class="fw7 f5-l link dim black dib pa3 ph4-l ${active && "i"}"
+    class="fw7 f5-l link dim black dib pa3 ph4-l ${isActive && active}"
     href="${to}"
   >
     ${label}
@@ -53,18 +91,41 @@ function loading() {
   `;
 }
 
-function list(data) {
+function teamMember(data) {
+  return html`
+    <div>
+      <div>${data.username}</div>
+      <div>${data.tier}</div>
+      <div>${data.score}</div>
+    </div>
+  `;
+}
+
+function team(team, i) {
+  return html`<li>
+    <div>${i + 1}</div>
+    ${team.map((item) => teamMember(item))}
+  </li>`;
+}
+
+function list(teams) {
   return html`
     <ul class="list pl0 measure center">
-      ${data.map(
-        (item) => html`<li
-          class="lh-copy pv3 ba bl-0 bt-0 br-0 b--dotted b--black-30"
-        >
-          ${item.position + 1} - ${item.username} - ${item.score}
-        </li>`
-      )}
+      ${teams.map((item, i) => team(item, i))}
     </ul>
   `;
+}
+
+function footer(data) {
+  if (data.lastUpdated) {
+    return html`<footer class="f7 glow o-30 pv3 center">
+      Last updated: ${data.lastUpdated}. Updates every hour.
+      <a href="https://raindi.sh/" class="link black bold fw9"
+        ><span class="red">♡</span> raindish.</a
+      >
+    </footer>`;
+  }
+  return null;
 }
 
 module.exports = function view(state, emit) {
@@ -86,11 +147,13 @@ module.exports = function view(state, emit) {
 
   return html`
     <body class="avenir helvetica lh-copy h-100">
-      <main class="pa3 cf center flex flex-column h-100">
+      <main class="pa3 pb0 cf center flex flex-column h-100">
         <header class="bg-white black-80 tc">
-          <h1 class="mt2 mb0 f6 fw4 ttu tracked">VT2 Leaderboards</h1>
-          <h2 class="mt0 mb0 i fw1 f1">${leaderboard.label}</h2>
-          <nav class="bt bb tc mw7 center">
+          <h1 class="mv2 f6 fw9 ttu dark-red ${trackedOmega}">
+            VT2 Leaderboards
+          </h1>
+          <h2 class=${visuallyHidden}>${leaderboard.label}</h2>
+          <nav class="bb tc mw7 center">
             ${nav}
           </nav>
         </header>
@@ -99,6 +162,7 @@ module.exports = function view(state, emit) {
             ? loading()
             : list(leaderboard_state.data)}
         </section>
+        ${footer(leaderboard_state)}
       </main>
     </body>
   `;

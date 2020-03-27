@@ -19,6 +19,45 @@ var TYPE_TO_NUM = {
   quartet: 4,
 };
 var API_ENDPOINT = "https://5107.playfabapi.com/Client/GetLeaderboard";
+var CAREER_ID_LOOKUP = [
+  "dr_ranger",
+  "dr_slayer",
+  "dr_ironbreaker",
+  "we_waywatcher",
+  "we_shade",
+  "we_maidenguard",
+  "es_huntsman",
+  "es_mercenary",
+  "es_knight",
+  "bw_adept",
+  "bw_scholar",
+  "bw_unchained",
+  "wh_captain",
+  "wh_bountyhunter",
+  "wh_zealot",
+];
+
+function convertWeaveScore(weave_score) {
+  var value = weave_score + 2147483648.0;
+  var career_index = Math.round((value / 100 - Math.floor(value / 100)) * 100);
+  var careerName = CAREER_ID_LOOKUP[career_index - 1];
+  value = Math.floor(value / 100);
+  var score = Math.round(
+    (value / 100000 - Math.floor(value / 100000)) * 100000
+  );
+  value = Math.floor(value / 100000);
+  var tier = value;
+
+  return { tier, score, careerName };
+}
+
+function chunkArray(array, chunkSize) {
+  var R = [];
+  for (var i = 0; i < array.length; i += chunkSize) {
+    R.push(array.slice(i, i + chunkSize));
+  }
+  return R;
+}
 
 async function fetchLeaderboard(type) {
   var numPlayers = TYPE_TO_NUM[type];
@@ -45,13 +84,17 @@ async function fetchLeaderboard(type) {
   if (response.ok) {
     var leaderboardData = await response.json();
     var data = leaderboardData.data.Leaderboard.map((position) => {
+      const { tier, score, careerName } = convertWeaveScore(position.StatValue);
       return {
         position: position.Position,
-        score: position.StatValue, // @TODO: conver this to display, see game code,
+        tier: tier,
+        score: score,
+        careerName: careerName,
         username: position.Profile.LinkedAccounts[0].Username, // @TODO: make this cross platform and reliable, see game code,
       };
     });
-    return { data, lastUpdated: Date() };
+    var teams = chunkArray(data, numPlayers);
+    return { data: teams, lastUpdated: new Date().toISOString() };
   }
   return {
     error: true,
