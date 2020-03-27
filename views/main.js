@@ -5,9 +5,11 @@ var LoadingIcon = require("../components/loading-icon.js");
 css`
   html {
     height: 100%;
+    font-family: "IM Fell English", serif;
   }
   body {
     height: 100%;
+    font-family: "IM Fell English", serif;
   }
 `;
 
@@ -71,7 +73,7 @@ function getLeaderboardByRoute(route) {
 
 function link(to, label, isActive) {
   return html`<a
-    class="fw7 f5-l link dim black dib pa3 ph4-l ${isActive && active}"
+    class="fw7 f3 link dim black dib pa3 ph4-l ${isActive && active}"
     href="${to}"
   >
     ${label}
@@ -91,8 +93,34 @@ function loading() {
   `;
 }
 
+var CAREER_NAME_LOOKUP = {
+  dr_ranger: "Ranger Veteran",
+  dr_slayer: "Slayer",
+  dr_ironbreaker: "Iron Breaker",
+  we_waywatcher: "Waystalker",
+  we_shade: "Shade",
+  we_maidenguard: "Handmaiden",
+  es_huntsman: "Huntsman",
+  es_mercenary: "Mercenary",
+  es_knight: "Foot Knight",
+  bw_adept: "Battle Wizard",
+  bw_scholar: "Pyromancer",
+  bw_unchained: "Unchained",
+  wh_captain: "Witch Hunter Captain",
+  wh_bountyhunter: "Bounty Hunter",
+  wh_zealot: "Zealot",
+};
+
 function teamMember(data) {
-  return html`<div>${data.username}</div>`;
+  return html`<div class="flex flex-row items-center mb1">
+    <img
+      src="/assets/careers/${data.careerName}.png"
+      alt=${CAREER_NAME_LOOKUP[data.careerName]}
+      title=${CAREER_NAME_LOOKUP[data.careerName]}
+      height="50"
+      class="fl mr1"
+    /><span>${data.username}</span>
+  </div>`;
 }
 
 var teambox = css`
@@ -201,11 +229,16 @@ module.exports = function view(state, emit) {
   );
 
   return html`
-    <body class="avenir helvetica lh-copy h-100">
+    <body class="lh-copy h-100">
       <main class="ph3 cf center flex flex-column h-100">
-        <header class="pt3 bg-white black-80 tc ${headerstyle}">
-          <h1 class="mv2 f6 fw9 ttu dark-red ${trackedOmega}">
-            VT2 Leaderboards
+        <header class="bg-white black-80 tc ${headerstyle}">
+          <h1 class="mt1 mb0" style="height: 100px">
+            <span class="${visuallyHidden}">Vermintide 2 Leaderboards</span>
+            <img
+              src="/assets/logo.png"
+              title="Vermintide 2 Leaderboards"
+              height="100"
+            />
           </h1>
           <h2 class=${visuallyHidden}>${leaderboard.label}</h2>
           <nav class="bb tc mw7 center">
