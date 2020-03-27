@@ -5,6 +5,7 @@ var path = require("path");
 var merry = require("merry");
 var fetch = require("node-fetch");
 var TimedCache = require("timed-cache");
+var getAuthorization = require("./authentication.js");
 
 // 1 hour cache
 var cache = new TimedCache({ defaultTtl: 3600 * 1000 });
@@ -22,6 +23,12 @@ var API_ENDPOINT = "https://5107.playfabapi.com/Client/GetLeaderboard";
 async function fetchLeaderboard(type) {
   var numPlayers = TYPE_TO_NUM[type];
   var statisticName = `s2_weave_score_${numPlayers}_players`;
+  var authorization = cache.get("authorization");
+  if (!authorization) {
+    authorization = await getAuthorization();
+    // PlayFab sessions last 24 hours, this is 20 hours
+    cache.put("authorization", authorization, { ttl: 20 * 3600 * 1000 });
+  }
   var response = await fetch(API_ENDPOINT, {
     method: "POST",
     body: JSON.stringify({
@@ -32,7 +39,7 @@ async function fetchLeaderboard(type) {
     }),
     headers: {
       "Content-Type": "application/json",
-      "X-Authorization": process.env.authorization,
+      "X-Authorization": authorization,
     },
   });
   if (response.ok) {
