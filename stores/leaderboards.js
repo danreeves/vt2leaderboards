@@ -5,12 +5,13 @@ var url =
     : "http://localhost:8080";
 
 module.exports = function store(state, emitter) {
-  emitter.on("get_list", async function (key) {
-    state[key] = { loading: true };
+  emitter.on("get_list", async function (season, type) {
+    state[season] = state[season] || {};
+    state[season][type] = { loading: true };
     emitter.emit(state.events.RENDER);
-    var res = await fetch(`${url}/api/${key}`);
+    var res = await fetch(`${url}/api/${season}/${type}`);
     var data = await res.json();
-    state[key] = Object.assign({}, data, { loading: false });
+    state[season][type] = Object.assign({}, data, { loading: false });
     emitter.emit(state.events.RENDER);
   });
 };
