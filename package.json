@@ -1,6 +1,6 @@
 {
   "name": "vt2leaderboards",
-  "version": "3.1.1",
+  "version": "4.0.0",
   "private": true,
   "scripts": {
     "start": "node server.js | pino-colada"
