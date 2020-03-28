@@ -23,7 +23,7 @@ var active = css`
   }
 `;
 
-module.exports = function Link(to, label, isActive, padding = 3) {
+module.exports = function Link(to, label, isActive, padding = 2) {
   return html`<a
     class="fw7 f3 link dim black dib pa${padding} ph4-l ${isActive && active}"
     href=${to}
