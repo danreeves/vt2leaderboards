@@ -1,7 +1,7 @@
 var fetch = window.fetch || require("node-fetch");
 var url =
   process.env.NODE_ENV === "production"
-    ? "https://vt2leaderboards.onrender.com"
+    ? "https://leaderboards.verminti.de"
     : "http://localhost:8080";
 
 module.exports = function store(state, emitter) {

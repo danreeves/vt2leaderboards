@@ -40,6 +40,12 @@ seasons.forEach((season) => {
 
 app.route("/*", require("./views/404"));
 
+// Redirect to cool url
+if (document.location.hostname === "vt2leaderboards.onrender.com") {
+  document.location =
+    "https://leaderboards.verminti.de" + document.location.pathname;
+}
+
 window.app = app;
 
 module.exports = app.mount("body");
