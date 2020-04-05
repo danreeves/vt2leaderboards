@@ -24,6 +24,17 @@
   },
   "devDependencies": {
     "choo-devtools": "^3.0.4",
-    "prettier": "^2.0.2"
+    "prettier": "^2.0.2",
+    "xo": "^0.28.3"
+  },
+  "xo": {
+    "prettier": true,
+    "space": 2,
+    "env": ["es2020", "browser", "node", "commonjs"]
+  },
+  "prettier": {
+    "singleQuote": false,
+    "trailingComma": "all",
+    "bracketSpacing": true
   }
 }

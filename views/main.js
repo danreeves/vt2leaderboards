@@ -1,21 +1,21 @@
-var html = require("choo/html");
-var css = require("sheetify");
+const html = require("choo/html");
+const css = require("sheetify");
 
-var { title, seasons, types, upperCaseFirst } = require("../constants.js");
+const { title, seasons, types, upperCaseFirst } = require("../constants.js");
 
-var Loading = require("../components/loading.js");
-var Link = require("../components/link.js");
-var Footer = require("../components/footer.js");
-var List = require("../components/list.js");
+const loading = require("../components/loading.js");
+const link = require("../components/link.js");
+const footer = require("../components/footer.js");
+const list = require("../components/list.js");
 
-var sectioncss = css`
+const sectioncss = css`
   :host {
     flex-grow: 1;
     flex-shrink: 1;
   }
 `;
 
-var visuallyHidden = css`
+const visuallyHidden = css`
   :host {
     position: absolute;
     left: -10000px;
@@ -26,13 +26,7 @@ var visuallyHidden = css`
   }
 `;
 
-var trackedOmega = css`
-  :host {
-    letter-spacing: 0.5em;
-  }
-`;
-
-var headerstyle = css`
+const headerstyle = css`
   :host {
     background-image: url(/assets/weave.png);
     background-repeat: no-repeat;
@@ -45,22 +39,22 @@ var headerstyle = css`
   }
 `;
 
-module.exports = function view(state, emit) {
-  var [season, type] = state.route.split("/");
-  var leaderboard_state = state[season] && state[season][type];
-  var pageTitle = `${title} - ${upperCaseFirst(type)}`;
+module.exports = function (state, emit) {
+  const [season, type] = state.route.split("/");
+  let leaderboardState = state[season] && state[season][type];
+  const pageTitle = `${title} - ${upperCaseFirst(type)}`;
 
   if (state.title !== pageTitle) emit(state.events.DOMTITLECHANGE, pageTitle);
 
-  if (!leaderboard_state) {
+  if (!leaderboardState) {
     emit("get_list", season, type);
-    leaderboard_state = { loading: true };
+    leaderboardState = { loading: true };
   }
 
-  var seasonNav = seasons.map((s) =>
-    Link(`/${s}/${type}`, `Season ${s}`, s === season, 1)
+  const seasonNav = seasons.map((s) =>
+    link(`/${s}/${type}`, `Season ${s}`, s === season, 1),
   );
-  var typeNav = types.map((t) => Link(t, upperCaseFirst(t), t === type));
+  const typeNav = types.map((t) => link(t, upperCaseFirst(t), t === type));
 
   return html`
     <body class="lh-copy h-100">
@@ -85,11 +79,9 @@ module.exports = function view(state, emit) {
           </nav>
         </header>
         <section class="flex overflow-scroll overflow-x-hidden ${sectioncss}">
-          ${leaderboard_state.loading
-            ? Loading()
-            : List(leaderboard_state.data)}
+          ${leaderboardState.loading ? loading() : list(leaderboardState.data)}
         </section>
-        ${Footer(leaderboard_state)}
+        ${footer(leaderboardState)}
       </main>
     </body>
   `;

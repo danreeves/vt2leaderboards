@@ -1,6 +1,6 @@
-var html = require("choo/html");
-var css = require("sheetify");
-var { careerNameLookup } = require("../constants.js");
+const html = require("choo/html");
+const css = require("sheetify");
+const { careerNameLookup } = require("../constants.js");
 
 function teamMember(data, last) {
   return html`<div class="flex flex-row items-center ${!last && "mb1"}">
@@ -14,7 +14,7 @@ function teamMember(data, last) {
   </div>`;
 }
 
-var teambox = css`
+const teambox = css`
   :host {
     width: 500px;
     max-width: 100%;
@@ -24,7 +24,7 @@ var teambox = css`
   }
 `;
 
-var scoreRow = css`
+const scoreRow = css`
   :host {
     display: flex;
     flex-direction: row;
@@ -42,13 +42,13 @@ var scoreRow = css`
   }
 `;
 
-var teamCol = css`
+const teamCol = css`
   :host {
     flex-direction: column;
   }
 `;
 
-var evenTeam = css`
+const evenTeam = css`
   :host {
     background: #f9f9f9;
   }
@@ -64,7 +64,7 @@ function team(teamMembers, i) {
       <div class="rank">${i + 1}</div>
       <div class="name ${teamCol}">
         ${teamMembers.map((item, i) =>
-          teamMember(item, i === teamMembers.length - 1)
+          teamMember(item, i === teamMembers.length - 1),
         )}
       </div>
       <div>${tier}</div>
@@ -73,14 +73,14 @@ function team(teamMembers, i) {
   </li>`;
 }
 
-module.exports = function List(teams) {
-  var firstTeam = teams[0];
-  var numPlayers = firstTeam.length;
+module.exports = function (teams) {
+  const firstTeam = teams[0];
+  const numberPlayers = firstTeam.length;
   return html`
     <ul class="list pl0 center flex flex-column mw-100">
       <div class="fw6 ${scoreRow} ${teambox}">
         <div class="rank">Rank</div>
-        <div class="name">${numPlayers === 1 ? "Player" : "Team"}</div>
+        <div class="name">${numberPlayers === 1 ? "Player" : "Team"}</div>
         <div>Tier</div>
         <div>Score</div>
       </div>

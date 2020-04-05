@@ -1,18 +1,17 @@
 require("dotenv").config();
-var bankai = require("bankai/http");
-var http = require("http");
-var path = require("path");
-var merry = require("merry");
-var TimedCache = require("timed-cache");
-var { types } = require("./constants.js");
-var fetchLeaderboard = require("./leaderboards.js");
+const bankai = require("bankai/http");
+const path = require("path");
+const merry = require("merry");
+const TimedCache = require("timed-cache");
+const { types } = require("./constants.js");
+const fetchLeaderboard = require("./leaderboards.js");
 
 // 1 hour cache
-var cache = new TimedCache({ defaultTtl: 3600 * 1000 });
+const cache = new TimedCache({ defaultTtl: 3600 * 1000 });
 
-var PROD = process.env.NODE_ENV === "production";
+const PROD = process.env.NODE_ENV === "production";
 
-var compiler = bankai(path.join(__dirname, "index.js"), {
+const compiler = bankai(path.join(__dirname, "index.js"), {
   quiet: PROD,
   watch: !PROD,
 });
@@ -22,43 +21,50 @@ compiler.compiler.on("error", function (nodeName, edgeName, error) {
   console.error(error);
 });
 
-var app = merry();
+const app = merry();
 
-app.route("GET", "/health-check", function (req, res, ctx) {
-  res.writeHead(200).end();
+app.route("GET", "/health-check", function (_, response) {
+  response.writeHead(200).end();
 });
 
-app.route("GET", "/api/:season/:type", async function (req, res, ctx) {
-  var {
+app.route("GET", "/api/:season/:type", async function (
+  _request,
+  _response,
+  context,
+) {
+  const {
     params: { season, type },
-  } = ctx;
+  } = context;
   if (!types.includes(type)) {
-    ctx.send(404, {
+    context.send(404, {
       error: true,
       message: "Invalid type",
     });
   }
-  var data = cache.get({ season, type });
+
+  let data = cache.get({ season, type });
   if (!data) {
     data = await fetchLeaderboard(season, type);
     if (data.error) {
-      ctx.log.error(`${data.status} - ${data.statusText}`);
-      ctx.send(500, {
+      context.log.error(`${data.status} - ${data.statusText}`);
+      context.send(500, {
         error: true,
-        message: "Couldn't fetch data",
+        message: "Couldn’t fetch data",
       });
       return;
     }
+
     cache.put({ season, type }, data);
   }
-  ctx.send(200, data);
+
+  context.send(200, data);
 });
 
-app.route("default", function (req, res, ctx) {
-  compiler(req, res, function () {
-    res.statusCode = 404;
-    res.end("not found");
+app.route("default", function (request, response) {
+  compiler(request, response, function () {
+    response.statusCode = 404;
+    response.end("not found");
   });
 });
 
-app.listen(parseInt(process.env.PORT) || 8080);
+app.listen(parseInt(process.env.PORT, 10) || 8080);

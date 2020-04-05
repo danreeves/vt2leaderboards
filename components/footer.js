@@ -1,6 +1,6 @@
-var html = require("choo/html");
+const html = require("choo/html");
 
-module.exports = function Footer(data) {
+module.exports = function (data) {
   if (data.lastUpdated) {
     return html`<footer class="f7 glow o-30 pv3 center code">
       Last updated: ${data.lastUpdated}. Updates every hour.
@@ -9,5 +9,6 @@ module.exports = function Footer(data) {
       >
     </footer>`;
   }
+
   return null;
 };

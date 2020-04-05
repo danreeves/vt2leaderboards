@@ -1,11 +1,12 @@
-require("regenerator-runtime/runtime");
-var css = require("sheetify");
-var choo = require("choo");
-var { seasons, types } = require("./constants.js");
+require("regenerator-runtime/runtime"); // eslint-disable-line import/no-unassigned-import
+const css = require("sheetify");
+const choo = require("choo");
+const { seasons, types } = require("./constants.js");
 
 css("tachyons");
 css("./font.css");
 
+// eslint-disable-next-line no-unused-expressions
 css`
   html {
     height: 100%;
@@ -17,23 +18,23 @@ css`
   }
 `;
 
-var app = choo();
-if (process.env.NODE_ENV !== "production") {
-  app.use(require("choo-devtools")());
-} else {
+const app = choo();
+if (process.env.NODE_ENV === "production") {
   app.use(require("choo-service-worker")());
+} else {
+  app.use(require("choo-devtools")());
 }
 
 app.use(require("./stores/leaderboards"));
 
-app.route("/", require("./views/redirectToDefault"));
+app.route("/", require("./views/redirect-to-default"));
 
 // We need to generate routes because choojs/wayfarer
 // doesn't support /:nested/:partials
-var main = require("./views/main.js");
+const main = require("./views/main.js");
 seasons.forEach((season) => {
   types.forEach((type) => {
-    var route = `/${season}/${type}`;
+    const route = `/${season}/${type}`;
     app.route(route, main);
   });
 });

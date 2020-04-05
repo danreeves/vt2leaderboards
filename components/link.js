@@ -1,8 +1,7 @@
-var html = require("choo/html");
-var css = require("sheetify");
-var { upperCaseFirst } = require("../constants.js");
+const html = require("choo/html");
+const css = require("sheetify");
 
-var active = css`
+const active = css`
   :host {
     position: relative;
     font-style: italic;
@@ -23,7 +22,7 @@ var active = css`
   }
 `;
 
-module.exports = function Link(to, label, isActive, padding = 2) {
+module.exports = function (to, label, isActive, padding = 2) {
   return html`<a
     class="fw7 f3 link dim black dib pa${padding} ph4-l ${isActive && active}"
     href=${to}

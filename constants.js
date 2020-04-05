@@ -1,13 +1,14 @@
-var title = "VT2 Leaderboards";
+const title = "VT2 Leaderboards";
 
-var types = ["quartet", "trio", "duo", "solo"];
+const types = ["quartet", "trio", "duo", "solo"];
 
-var seasons = ["1", "2"];
+const seasons = ["1", "2"];
 
-var defaultSeason = seasons[seasons.length - 1];
-var defaultType = "quartet";
+const defaultSeason = seasons[seasons.length - 1];
+const defaultType = "quartet";
 
-var careerNameLookup = {
+/* eslint-disable camelcase */
+const careerNameLookup = {
   dr_ranger: "Ranger Veteran",
   dr_slayer: "Slayer",
   dr_ironbreaker: "Iron Breaker",
@@ -24,9 +25,10 @@ var careerNameLookup = {
   wh_bountyhunter: "Bounty Hunter",
   wh_zealot: "Zealot",
 };
+/* eslint-enable camelcase */
 
-function upperCaseFirst(str) {
-  return str.charAt(0).toUpperCase() + str.slice(1, str.length);
+function upperCaseFirst(string) {
+  return string.charAt(0).toUpperCase() + string.slice(1, string.length);
 }
 
 module.exports = {

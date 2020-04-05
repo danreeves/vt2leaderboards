@@ -1,12 +1,12 @@
-var html = require("choo/html");
-var LoadingIcon = require("./loading-icon.js");
+const html = require("choo/html");
+const loadingIcon = require("./loading-icon.js");
 
-module.exports = function Loading() {
+module.exports = function () {
   return html`
     <div class="mv7 center">
       <div class="flex flex-row justify-center v-mid fw7 i">
         <div class="animate rotate dib flex flex-column justify-center mr1">
-          ${LoadingIcon()}
+          ${loadingIcon()}
         </div>
         Loading...
       </div>

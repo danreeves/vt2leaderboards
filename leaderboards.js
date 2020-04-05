@@ -1,19 +1,18 @@
-var fetch = require("node-fetch");
-var TimedCache = require("timed-cache");
-var getAuthorization = require("./authentication.js");
+const fetch = require("node-fetch");
+const TimedCache = require("timed-cache");
+const getAuthorization = require("./authentication.js");
 
 // 20 hour cache
-var cache = new TimedCache({ defaultTtl: 20 * 3600 * 1000 });
+const cache = new TimedCache({ defaultTtl: 20 * 3600 * 1000 });
 
-var TYPES = ["solo", "duo", "trio", "quartet"];
-var TYPE_TO_NUM = {
+const TYPE_TO_NUM = {
   solo: 1,
   duo: 2,
   trio: 3,
   quartet: 4,
 };
-var API_ENDPOINT = "https://5107.playfabapi.com/Client/GetLeaderboard";
-var CAREER_ID_LOOKUP = [
+const API_ENDPOINT = "https://5107.playfabapi.com/Client/GetLeaderboard";
+const CAREER_ID_LOOKUP = [
   "dr_ranger",
   "dr_slayer",
   "dr_ironbreaker",
@@ -31,66 +30,61 @@ var CAREER_ID_LOOKUP = [
   "wh_zealot",
 ];
 
-function convertWeaveScore(weave_score) {
-  var value = weave_score + 2147483648.0;
-  var career_index = Math.round((value / 100 - Math.floor(value / 100)) * 100);
-  var careerName = CAREER_ID_LOOKUP[career_index - 1];
+function convertWeaveScore(weaveScore) {
+  let value = weaveScore + 2147483648;
+  const careerIndex = Math.round((value / 100 - Math.floor(value / 100)) * 100);
+  const careerName = CAREER_ID_LOOKUP[careerIndex - 1];
   value = Math.floor(value / 100);
-  var score = Math.round(
-    (value / 100000 - Math.floor(value / 100000)) * 100000
+  const score = Math.round(
+    (value / 100000 - Math.floor(value / 100000)) * 100000,
   );
   value = Math.floor(value / 100000);
-  var tier = value;
+  const tier = value;
 
   return { tier, score, careerName };
 }
 
 function chunkTeams(players, teamSize) {
-  var teams = [];
-  var currentTeam = [];
-  var lastPlayer = null;
-  for (var player of players) {
+  const teams = [];
+  let currentTeam = [];
+  let lastPlayer = null;
+  for (const player of players) {
     if (!lastPlayer) {
       currentTeam.push(player);
+    } else if (player.score === lastPlayer.score) {
+      currentTeam.push(player);
     } else {
-      if (player.score === lastPlayer.score) {
-        currentTeam.push(player);
-      } else {
-        if (currentTeam.length !== 0) {
-          teams.push(currentTeam);
-        }
-        currentTeam = [player];
+      if (currentTeam.length !== 0) {
+        teams.push(currentTeam);
       }
+
+      currentTeam = [player];
     }
+
     if (currentTeam.length === teamSize) {
       teams.push(currentTeam);
       currentTeam = [];
     }
+
     lastPlayer = player;
   }
+
   return teams;
 }
 
-function getStatisticName(season, numPlayers) {
-  var seasonName = season === "1" ? "season_1" : `s${season}`;
-  return `${seasonName}_weave_score_${numPlayers}_players`;
+function getStatisticName(season, numberPlayers) {
+  const seasonName = season === "1" ? "season_1" : `s${season}`;
+  return `${seasonName}_weave_score_${numberPlayers}_players`;
 }
 
-module.exports = async function fetchLeaderboard(season, type) {
-  var numPlayers = TYPE_TO_NUM[type];
-  var statisticName = getStatisticName(season, numPlayers);
-  var authorization = cache.get("authorization");
-  if (!authorization) {
-    authorization = await getAuthorization();
-    // PlayFab sessions last 24 hours, this is 20 hours
-    cache.put("authorization", authorization);
-  }
-  var response = await fetch(API_ENDPOINT, {
+async function getPage({ pageNumber, statisticName, authorization }) {
+  const startPosition = pageNumber * 100;
+  const response = await fetch(API_ENDPOINT, {
     method: "POST",
     body: JSON.stringify({
       MaxResultsCount: 100,
       StatisticName: statisticName,
-      StartPosition: 0,
+      StartPosition: startPosition,
       ProfileConstraints: { ShowLinkedAccounts: true },
     }),
     headers: {
@@ -98,24 +92,61 @@ module.exports = async function fetchLeaderboard(season, type) {
       "X-Authorization": authorization,
     },
   });
+
   if (response.ok) {
-    var leaderboardData = await response.json();
-    var players = leaderboardData.data.Leaderboard.map((position) => {
+    const leaderboardData = await response.json();
+    const players = leaderboardData.data.Leaderboard.map((position) => {
       const { tier, score, careerName } = convertWeaveScore(position.StatValue);
       return {
         position: position.Position,
-        tier: tier,
-        score: score,
-        careerName: careerName,
+        tier,
+        score,
+        careerName,
         username: position.Profile.LinkedAccounts[0].Username, // @TODO: make this cross platform and reliable, see game code,
       };
     });
-    var teams = chunkTeams(players, numPlayers);
-    return { data: teams, lastUpdated: new Date().toISOString() };
+    return players;
   }
-  return {
-    error: true,
-    status: response.status,
-    statusText: response.statusText,
-  };
+
+  throw response;
+}
+
+module.exports = async function (season, type) {
+  const numberPlayers = TYPE_TO_NUM[type];
+  const statisticName = getStatisticName(season, numberPlayers);
+  let authorization = cache.get("authorization");
+  if (!authorization) {
+    authorization = await getAuthorization();
+    // PlayFab sessions last 24 hours, this is 20 hours
+    cache.put("authorization", authorization);
+  }
+
+  try {
+    const pages = Array.from({ length: numberPlayers }).map((_, pageNumber) => {
+      return getPage({
+        pageNumber,
+        statisticName,
+        authorization,
+      });
+    }, []);
+
+    await Promise.all(pages);
+
+    let players = [];
+    for (const page of pages) {
+      const pageData = await page; // eslint-disable-line no-await-in-loop
+      players = players.concat(pageData);
+    }
+
+    const teams = chunkTeams(players, numberPlayers).slice(0, 100);
+
+    return { data: teams, lastUpdated: new Date().toISOString() };
+  } catch (error) {
+    console.log(error);
+    return {
+      error: true,
+      status: error.status,
+      statusText: error.statusText,
+    };
+  }
 };
