@@ -1,5 +1,4 @@
 TODO
-dont serve gimp asset
 add cache headers
 favicon
 robots.txt file
@@ -8,3 +7,5 @@ resize images
 
 
 DONE
+all leaderboards serve 100 teams
+dont serve gimp asset
