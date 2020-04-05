@@ -1,4 +1,3 @@
-const fetch = window.fetch || require("node-fetch");
 const url =
   process.env.NODE_ENV === "production"
     ? "https://leaderboards.verminti.de"

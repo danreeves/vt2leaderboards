@@ -1,10 +1,13 @@
 require("dotenv").config();
-const bankai = require("bankai/http");
+const { readFileSync } = require("fs");
 const path = require("path");
 const merry = require("merry");
+const bankai = require("bankai/http");
 const TimedCache = require("timed-cache");
 const { types } = require("./constants.js");
 const fetchLeaderboard = require("./leaderboards.js");
+
+const robotsTxt = readFileSync("./robots.txt", { encoding: "UTF-8" });
 
 // 1 hour cache
 const cache = new TimedCache({ defaultTtl: 3600 * 1000 });
@@ -60,7 +63,17 @@ app.route("GET", "/api/:season/:type", async function (
   context.send(200, data);
 });
 
+app.route("GET", "/robots.txt", function (request, response, context) {
+  context.send(200, robotsTxt);
+});
+
 app.route("default", function (request, response) {
+  const cacheables = [".js", ".css", ".png"];
+
+  if (cacheables.some((extension) => request.url.includes(extension))) {
+    response.setHeader("Cache-Control", "public, max-age=604800, immutable");
+  }
+
   compiler(request, response, function () {
     response.statusCode = 404;
     response.end("not found");

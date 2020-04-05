@@ -1,7 +1,4 @@
 TODO
-add cache headers
-favicon
-robots.txt file
 apple touch icons
 resize images
 
@@ -9,3 +6,6 @@ resize images
 DONE
 all leaderboards serve 100 teams
 dont serve gimp asset
+add cache headers
+robots.txt file
+favicon
