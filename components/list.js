@@ -57,9 +57,7 @@ const evenTeam = css`
 function team(teamMembers, i) {
   const firstMember = teamMembers[0];
   const { tier, score } = firstMember;
-  return html`<li
-    class="flex flex-column ${teambox} ${i % 2 === 0 && evenTeam}"
-  >
+  return html`<li class="${teambox} ${i % 2 === 0 && evenTeam}">
     <div class=${scoreRow}>
       <div class="rank">${i + 1}</div>
       <div class="name ${teamCol}">

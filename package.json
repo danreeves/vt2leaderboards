@@ -30,7 +30,12 @@
   "xo": {
     "prettier": true,
     "space": 2,
-    "env": ["es2020", "browser", "node", "commonjs"]
+    "env": [
+      "es2020",
+      "browser",
+      "node",
+      "commonjs"
+    ]
   },
   "prettier": {
     "singleQuote": false,
