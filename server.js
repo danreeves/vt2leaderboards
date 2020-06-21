@@ -6,6 +6,7 @@ const bankai = require("bankai/http");
 const TimedCache = require("timed-cache");
 const { types } = require("./constants.js");
 const fetchLeaderboard = require("./leaderboards.js");
+const archive = require("./archive.js");
 
 const robotsTxt = readFileSync("./robots.txt", { encoding: "UTF-8" });
 
@@ -58,6 +59,7 @@ app.route("GET", "/api/:season/:type", async function (
     }
 
     cache.put({ season, type }, data);
+    await archive({ season, type }, data);
   }
 
   context.send(200, data);

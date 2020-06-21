@@ -72,6 +72,10 @@ function team(teamMembers, i) {
 }
 
 module.exports = function (teams) {
+  if (teams.length === 0) {
+    return html` <div class="center pa5">No leaderboard data</div> `;
+  }
+
   const firstTeam = teams[0];
   const numberPlayers = firstTeam.length;
   return html`

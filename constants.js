@@ -2,7 +2,7 @@ const title = "VT2 Leaderboards";
 
 const types = ["quartet", "trio", "duo", "solo"];
 
-const seasons = ["1", "2"];
+const seasons = ["1", "2", "3"];
 
 const defaultSeason = seasons[seasons.length - 1];
 const defaultType = "quartet";
