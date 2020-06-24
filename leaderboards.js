@@ -22,13 +22,13 @@ const CAREER_ID_LOOKUP = [
   "es_huntsman",
   "es_mercenary",
   "es_knight",
-  "es_questingknight",
   "bw_adept",
   "bw_scholar",
   "bw_unchained",
   "wh_captain",
   "wh_bountyhunter",
   "wh_zealot",
+  "es_questingknight",
 ];
 
 function convertWeaveScore(weaveScore) {
