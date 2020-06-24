@@ -18,6 +18,7 @@ const careerNameLookup = {
   es_huntsman: "Huntsman",
   es_mercenary: "Mercenary",
   es_knight: "Foot Knight",
+  es_questingknight: "Grail Knight",
   bw_adept: "Battle Wizard",
   bw_scholar: "Pyromancer",
   bw_unchained: "Unchained",
