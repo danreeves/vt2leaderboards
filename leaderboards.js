@@ -12,7 +12,7 @@ const TYPE_TO_NUM = {
   quartet: 4,
 };
 const API_ENDPOINT = "https://5107.playfabapi.com/Client/GetLeaderboard";
-const CAREER_ID_LOOKUP = [
+const CAREER_ID_LOOKUP_S1_S2 = [
   "dr_ranger",
   "dr_slayer",
   "dr_ironbreaker",
@@ -28,13 +28,32 @@ const CAREER_ID_LOOKUP = [
   "wh_captain",
   "wh_bountyhunter",
   "wh_zealot",
-  "es_questingknight",
 ];
 
-function convertWeaveScore(weaveScore) {
+const CAREER_ID_LOOKUP = [
+  "dr_ranger",
+  "dr_slayer",
+  "dr_ironbreaker",
+  "we_waywatcher",
+  "we_shade",
+  "we_maidenguard",
+  "es_huntsman",
+  "es_mercenary",
+  "es_knight",
+  "es_questingknight",
+  "bw_adept",
+  "bw_scholar",
+  "bw_unchained",
+  "wh_captain",
+  "wh_bountyhunter",
+  "wh_zealot",
+];
+
+function convertWeaveScore(weaveScore, season) {
   let value = weaveScore + 2147483648;
   const careerIndex = Math.round((value / 100 - Math.floor(value / 100)) * 100);
-  const careerName = CAREER_ID_LOOKUP[careerIndex - 1];
+  const careerLookup = season < 3 ? CAREER_ID_LOOKUP_S1_S2 : CAREER_ID_LOOKUP;
+  const careerName = careerLookup[careerIndex - 1];
   value = Math.floor(value / 100);
   const score = Math.round(
     (value / 100000 - Math.floor(value / 100000)) * 100000,
@@ -78,7 +97,7 @@ function getStatisticName(season, numberPlayers) {
   return `${seasonName}_weave_score_${numberPlayers}_players`;
 }
 
-async function getPage({ pageNumber, statisticName, authorization }) {
+async function getPage({ pageNumber, statisticName, authorization, season }) {
   const startPosition = pageNumber * 100;
   const response = await fetch(API_ENDPOINT, {
     method: "POST",
@@ -97,7 +116,10 @@ async function getPage({ pageNumber, statisticName, authorization }) {
   if (response.ok) {
     const leaderboardData = await response.json();
     const players = leaderboardData.data.Leaderboard.map((position) => {
-      const { tier, score, careerName } = convertWeaveScore(position.StatValue);
+      const { tier, score, careerName } = convertWeaveScore(
+        position.StatValue,
+        parseInt(season, 10),
+      );
       return {
         position: position.Position,
         tier,
@@ -128,6 +150,7 @@ module.exports = async function (season, type) {
         pageNumber,
         statisticName,
         authorization,
+        season,
       });
     }, []);
 
