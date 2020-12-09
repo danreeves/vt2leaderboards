@@ -2,7 +2,7 @@ const title = "VT2 Leaderboards";
 
 const types = ["quartet", "trio", "duo", "solo"];
 
-const seasons = ["1", "2", "3"];
+const seasons = ["1", "2", "3", "4"];
 
 const defaultSeason = seasons[seasons.length - 1];
 const defaultType = "quartet";
@@ -12,6 +12,7 @@ const careerNameLookup = {
   dr_ranger: "Ranger Veteran",
   dr_slayer: "Slayer",
   dr_ironbreaker: "Iron Breaker",
+  dr_engineer: "Outcast Engineer",
   we_waywatcher: "Waystalker",
   we_shade: "Shade",
   we_maidenguard: "Handmaiden",
