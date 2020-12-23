@@ -30,7 +30,7 @@ const CAREER_ID_LOOKUP_S1_S2 = [
   "wh_zealot",
 ];
 
-const CAREER_ID_LOOKUP = [
+const CAREER_ID_LOOKUP_S3 = [
   "dr_ranger",
   "dr_slayer",
   "dr_ironbreaker",
@@ -47,13 +47,37 @@ const CAREER_ID_LOOKUP = [
   "wh_captain",
   "wh_bountyhunter",
   "wh_zealot",
+];
+
+const CAREER_ID_LOOKUP_S4 = [
+  "dr_ranger",
+  "dr_slayer",
+  "dr_ironbreaker",
   "dr_engineer",
+  "we_waywatcher",
+  "we_shade",
+  "we_maidenguard",
+  "es_huntsman",
+  "es_mercenary",
+  "es_knight",
+  "es_questingknight",
+  "bw_adept",
+  "bw_scholar",
+  "bw_unchained",
+  "wh_captain",
+  "wh_bountyhunter",
+  "wh_zealot",
 ];
 
 function convertWeaveScore(weaveScore, season) {
   let value = weaveScore + 2147483648;
   const careerIndex = Math.round((value / 100 - Math.floor(value / 100)) * 100);
-  const careerLookup = season < 3 ? CAREER_ID_LOOKUP_S1_S2 : CAREER_ID_LOOKUP;
+  const careerLookup =
+    season < 3
+      ? CAREER_ID_LOOKUP_S1_S2
+      : season === 3
+      ? CAREER_ID_LOOKUP_S3
+      : CAREER_ID_LOOKUP_S4;
   const careerName = careerLookup[careerIndex - 1];
   value = Math.floor(value / 100);
   const score = Math.round(
