@@ -47,6 +47,7 @@ const CAREER_ID_LOOKUP = [
   "wh_captain",
   "wh_bountyhunter",
   "wh_zealot",
+  "dr_engineer",
 ];
 
 function convertWeaveScore(weaveScore, season) {
