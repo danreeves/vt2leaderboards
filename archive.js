@@ -1,10 +1,15 @@
 const path = require("path");
+const { existsSync, mkdirSync } = require("fs");
 const { open } = require("fs").promises;
 
 module.exports = async function ({ season, type }, data) {
   const archiveLocation = process.env.RENDER
     ? "/var/data"
     : path.join(__dirname, "/var-data");
+
+  if (!existsSync(archiveLocation)) {
+    mkdirSync(archiveLocation);
+  }
 
   const fileName = `season_${season}_${type}_${data.lastUpdated}.json`;
   const filePath = path.join(archiveLocation, fileName);

@@ -71,12 +71,8 @@ module.exports = function (state, emit) {
             </a>
           </h1>
           <h2 class=${visuallyHidden}>${upperCaseFirst(type)}</h2>
-          <nav class="bb tc mw7 center">
-            ${seasonNav}
-          </nav>
-          <nav class="bb tc mw7 center">
-            ${typeNav}
-          </nav>
+          <nav class="bb tc mw7 center">${seasonNav}</nav>
+          <nav class="bb tc mw7 center">${typeNav}</nav>
         </header>
         <section class="flex overflow-scroll overflow-x-hidden ${sectioncss}">
           ${leaderboardState.loading ? loading() : list(leaderboardState.data)}
