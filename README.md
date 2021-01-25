@@ -1,1 +1,1 @@
-# [Vermintide 2 Leaderboards](https://vt2leaderboards.onrender.com)
+# [Vermintide 2 Weave Leaderboards](https://leaderboards.verminti.de)
